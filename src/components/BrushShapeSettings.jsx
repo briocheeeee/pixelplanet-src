@@ -87,10 +87,13 @@ export default function BrushShapeSettings() {
   }, [dispatch]);
 
   const onToggleCell = (x, y) => {
+    const current = normalizeMatrix(custom);
+    const next = current.map((row, yy) => (
+      row.map((val, xx) => ((xx === x && yy === y) ? !val : val))
+    ));
     dispatch(toggleBrushCell(x, y));
     try {
-      const matrix = normalizeMatrix(custom);
-      document.cookie = `brushCustom=${encodeURIComponent(JSON.stringify(matrix))}; path=/; SameSite=Lax`;
+      document.cookie = `brushCustom=${encodeURIComponent(JSON.stringify(next))}; path=/; SameSite=Lax`;
     } catch (e) {}
   };
 
