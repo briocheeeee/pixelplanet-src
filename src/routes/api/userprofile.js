@@ -3,6 +3,7 @@ import { User } from '../../data/sql/index.js';
 import { getUserFactionTag } from '../../data/redis/factions.js';
 import { USER_FLAGS } from '../../data/sql/User.js';
 import { getUserRanks } from '../../data/redis/ranks.js';
+import { FISHING } from '../../core/config.js';
 
 export default async (req, res) => {
   const { user } = req;
@@ -25,7 +26,7 @@ export default async (req, res) => {
     return;
   }
   const [fishes, ranks, ftag] = await Promise.all([
-    getFishesOfUser(uid),
+    FISHING ? getFishesOfUser(uid) : Promise.resolve([]),
     getUserRanks(uid),
     getUserFactionTag(uid),
   ]);
@@ -40,6 +41,7 @@ export default async (req, res) => {
   const [totalPixels, dailyTotalPixels, ranking, dailyRanking] = ranks || [];
   res.status(200).json({
     private: false,
+    fishingEnabled: !!FISHING,
     user: {
       id: target.id,
       name: target.name,

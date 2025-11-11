@@ -64,6 +64,7 @@ const UserProfile = () => {
     ranking: Number(data?.stats?.ranking || 0),
     dailyRanking: Number(data?.stats?.dailyRanking || 0),
   }), [data?.stats?.totalPixels, data?.stats?.dailyTotalPixels, data?.stats?.ranking, data?.stats?.dailyRanking]);
+  const fishingEnabled = Boolean(data?.fishingEnabled);
 
   useEffect(() => {
     if (user?.avatar) setAvatarVersion(Date.now());
@@ -227,27 +228,35 @@ const UserProfile = () => {
             </div>
           </div>
 
-          <div style={{ paddingTop: 12 }}>
-            <p className="fishlist" style={{ marginBottom: 6 }}>
-              <span className="stattext">{t`Phishes`}:</span>
-              <span className="hdivider" />
-              <span className="stattext">{t`Total`}:</span>&nbsp;<span className="statvalue">{numberToString(fishes.length)}</span>
-              <span className="hdivider" />
-              <span className="stattext">{t`Unique`}:</span>&nbsp;
-              <span className="statvalue">{numberToString(uniqueFishCount)}</span>
-            </p>
-            {(fishes.length === 0) && (
-              <div style={{ textAlign: 'center', opacity: 0.8 }}>{t`No phishes yet`}</div>
-            )}
-            {(fishes.length > 0 && fishItems) && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {fishItems}
-              </div>
-            )}
-            {(fishes.length > 0 && !fishItems) && (
-              <div style={{ textAlign: 'center', opacity: 0.8 }}>{t`Phishes unavailable`}</div>
-            )}
-          </div>
+          {fishingEnabled ? (
+            <div style={{ paddingTop: 12 }}>
+              <p className="fishlist" style={{ marginBottom: 6 }}>
+                <span className="stattext">{t`Phishes`}:</span>
+                <span className="hdivider" />
+                <span className="stattext">{t`Total`}:</span>&nbsp;<span className="statvalue">{numberToString(fishes.length)}</span>
+                <span className="hdivider" />
+                <span className="stattext">{t`Unique`}:</span>&nbsp;
+                <span className="statvalue">{numberToString(uniqueFishCount)}</span>
+              </p>
+              {(fishes.length === 0) && (
+                <div style={{ textAlign: 'center', opacity: 0.8 }}>{t`No phishes yet`}</div>
+              )}
+              {(fishes.length > 0 && fishItems) && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {fishItems}
+                </div>
+              )}
+              {(fishes.length > 0 && !fishItems) && (
+                <div style={{ textAlign: 'center', opacity: 0.8 }}>{t`Phishes unavailable`}</div>
+              )}
+            </div>
+          ) : (
+            <div style={{ paddingTop: 12 }}>
+              <p className="fishlist" style={{ marginBottom: 6, textAlign: 'center' }}>
+                <span className="stattext">{t`Daily Rank`}:</span>&nbsp;<span className="statvalue">#{numberToString(stats.dailyRanking, 'N/A')}</span>
+              </p>
+            </div>
+          )}
         </>
       )}
     </div>
