@@ -1,3 +1,15 @@
+:root {
+  --profile-card-bg: #2b0f0f;
+  --profile-card-border: #4b2525;
+  --profile-card-shadow: rgba(0, 0, 0, 0.35);
+  --profile-username-color: #ffdede;
+  --profile-name-color: #c9abab;
+  --profile-avatar-ring: #7a7a7a;
+  --profile-avatar-accent: #ff1818;
+  --profile-pill-text: #fff7f7;
+  --profile-pill-bg: #546d3b;
+}
+
 body {
   font-weight: bold;
 }
@@ -147,6 +159,10 @@ tr:nth-child(odd) {
 #loginbutton {
   background-color: rgb(112 0 0 / 80%);
   color: white;
+}
+
+#loginbutton.profilecard:hover {
+  background: var(--profile-card-bg);
 }
 
 #downloadbutton {
@@ -399,4 +415,27 @@ tr:nth-child(odd) {
   background-color: #2b0f0f;
   color: #ffdede;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+#helpbutton,
+#settingsbutton,
+#downloadbutton,
+#globebutton,
+#voxelbutton,
+#canvasbutton,
+#palselbutton,
+#chatbutton {
+  background: var(--profile-card-bg);
+  color: var(--profile-username-color);
+  border: 1px solid var(--profile-card-border);
+  box-shadow: 0 4px 10px var(--profile-card-shadow);
+  border-radius: 50%;
+  opacity: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(36px, 4.5vw, 44px);
+  height: clamp(36px, 4.5vw, 44px);
+  min-width: clamp(36px, 4.5vw, 44px);
+  padding: 0;
 }

@@ -1,3 +1,52 @@
+:root {
+  --profile-card-bg: #2a2a2a;
+  --profile-card-border: #3a3a3a;
+  --profile-card-shadow: rgba(0, 0, 0, 0.35);
+  --profile-username-color: #f2f2f2;
+  --profile-name-color: #c8c8c8;
+  --profile-avatar-ring: #5d5d5d;
+  --profile-avatar-accent: #ff6b6b;
+  --profile-pill-text: #f5f7f5;
+}
+
+#loginbutton.profilecard:hover {
+  background: var(--profile-card-bg);
+}
+
+#helpbutton,
+#settingsbutton,
+#downloadbutton,
+#globebutton,
+#voxelbutton,
+#canvasbutton,
+#palselbutton,
+#chatbutton {
+  background: var(--profile-card-bg);
+  color: var(--profile-username-color);
+  border: 1px solid var(--profile-card-border);
+  box-shadow: 0 4px 10px var(--profile-card-shadow);
+  border-radius: 50%;
+  opacity: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(36px, 4.5vw, 44px);
+  height: clamp(36px, 4.5vw, 44px);
+  min-width: clamp(36px, 4.5vw, 44px);
+  padding: 0;
+}
+
+#helpbutton:hover,
+#settingsbutton:hover,
+#downloadbutton:hover,
+#globebutton:hover,
+#voxelbutton:hover,
+#canvasbutton:hover,
+#palselbutton:hover,
+#chatbutton:hover {
+  background: var(--profile-card-bg);
+  box-shadow: 0 4px 10px var(--profile-card-shadow);
+}
 a:link {
   color: #8feaff;
 }

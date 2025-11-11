@@ -2,13 +2,82 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { t } from 'ttag';
 
 import useLink from '../hooks/link.js';
+import { useSelector, useDispatch } from 'react-redux';
+import { cdn } from '../../utils/utag.js';
+import { FISH_TYPES } from '../../core/constants.js';
+import { fetchProfile } from '../../store/actions/thunks.js';
 
 const LogInButton = () => {
   const link = useLink();
+  const dispatch = useDispatch();
+  const name = useSelector((s) => s.user.name);
+  const username = useSelector((s) => s.user.username);
+  const avatar = useSelector((s) => s.user.avatar);
+  const fishes = useSelector((s) => s.profile.fishes);
+  const lastFetch = useSelector((s) => s.profile.lastFetch);
+
+  useEffect(() => {
+    if (username && (!lastFetch || !Array.isArray(fishes) || fishes.length === 0)) {
+      dispatch(fetchProfile());
+    }
+  }, [username, lastFetch, fishes, dispatch]);
+
+  if (username && name) {
+    const topFishes = Array.isArray(fishes)
+      ? [...fishes].sort((a, b) => b.size - a.size).slice(0, 3)
+      : [];
+
+    return (
+      <div
+        id="loginbutton"
+        className="actionbuttons profilecard"
+        onClick={() => link('USERAREA', { target: 'fullscreen' })}
+        role="button"
+        title={t`User Area`}
+        tabIndex={-1}
+      >
+        <span className="pc-avatar">
+          {avatar ? (
+            <img src={avatar} alt="avatar" />
+          ) : (
+            <span className="pc-avatar-ph" />
+          )}
+        </span>
+        <div className="pc-body">
+          <div className="pc-title">
+            <span className="pc-username">{username}</span>
+            <span className="pc-name">{name}</span>
+          </div>
+          {!!topFishes.length && (
+            <div className="pc-fishes">
+              {topFishes.map(({ type, size, ts }) => {
+                const { name: fishName } = FISH_TYPES[type] || { name: '' };
+                const shortname = fishName.toLowerCase().split(' ').join('');
+                const sizeText = size >= 10 ? size.toFixed(2) : size.toFixed(1);
+                return (
+                  <span
+                    key={ts || `${shortname}-${size}`}
+                    className="profilefish pc-pill"
+                  >
+                    <img
+                      className={`profilefish-img ${shortname}`}
+                      src={cdn`/phishes/thumb/${shortname}.webp`}
+                      alt={fishName}
+                    />
+                    <span className="profilefish-size">{sizeText}</span>&nbsp;kg
+                  </span>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

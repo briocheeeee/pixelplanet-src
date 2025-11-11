@@ -12,31 +12,14 @@ import LogInButton from './buttons/LogInButton.jsx';
 import DownloadButton from './buttons/DownloadButton.jsx';
 
 const Menu = () => {
-  const [render, setRender] = useState(false);
   const menuOpen = useSelector((state) => state.gui.menuOpen);
-
-  useEffect(() => {
-    if (menuOpen) {
-      setTimeout(() => setRender(true), 10);
-    }
-  }, [menuOpen]);
-
-  const onTransitionEnd = () => {
-    if (!menuOpen) setRender(false);
-  };
-
   return (
-    (render || menuOpen) && (
-      <div
-        className={(menuOpen && render) ? 'menu show' : 'menu'}
-        onTransitionEnd={onTransitionEnd}
-      >
-        <SettingsButton />
-        <LogInButton />
-        <DownloadButton />
-        <HelpButton />
-      </div>
-    )
+    <div className="menu show">
+      <LogInButton />
+      <SettingsButton />
+      <DownloadButton />
+      <HelpButton />
+    </div>
   );
 };
 
