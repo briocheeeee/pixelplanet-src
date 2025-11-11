@@ -4,11 +4,13 @@
 
 import fs from 'fs';
 import path from 'path';
+import logger from './logger.js';
 
 import assetWatcher from './fsWatcher.js';
 import { ASSET_DIR } from './config.js';
 
-const assetDir = path.join(__dirname, 'public', ASSET_DIR);
+const assetSubdir = ASSET_DIR.replace(/^[/\\]+/, '');
+const assetDir = path.join(__dirname, 'public', assetSubdir);
 /*
  * {
  *   js:
@@ -36,7 +38,16 @@ function checkAssets() {
     css: {},
     themes: {},
   };
-  const assetFiles = fs.readdirSync(assetDir);
+  let assetFiles = [];
+  try {
+    if (!fs.existsSync(assetDir)) {
+      fs.mkdirSync(assetDir, { recursive: true });
+    }
+    assetFiles = fs.readdirSync(assetDir);
+  } catch (err) {
+    logger.error(`asset scan error: ${err.message}`);
+    return parsedAssets;
+  }
   const mtimes = {};
 
   for (const filename of assetFiles) {
@@ -89,7 +100,7 @@ function checkAssets() {
         break;
       }
       default:
-        // nothing
+      // nothing
     }
   }
   return parsedAssets;
@@ -120,7 +131,7 @@ export function getJsAssets(name, lang) {
       jsAssets.push(assets.js.three);
       break;
     default:
-      // nothing
+    // nothing
   }
 
   const nameAssets = assets.js[name];

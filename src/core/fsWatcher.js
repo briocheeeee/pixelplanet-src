@@ -26,21 +26,33 @@ class FsWatcher {
 
   initialize() {
     const watchPath = this.#path;
-    fs.watch(watchPath, (eventType, filename) => {
-      if (filename && this.filetypes.length) {
-        const ext = filename.split('.').pop();
-        if (!this.filetypes.includes(ext)) {
-          return;
+    try {
+      if (!fs.existsSync(watchPath)) {
+        fs.mkdirSync(watchPath, { recursive: true });
+      }
+    } catch (err) {
+      logger.error(`fs watcher init error: ${err.message}`);
+      return;
+    }
+    try {
+      fs.watch(watchPath, (eventType, filename) => {
+        if (filename && this.filetypes.length) {
+          const ext = filename.split('.').pop();
+          if (!this.filetypes.includes(ext)) {
+            return;
+          }
         }
-      }
-      if (this.#timeout) {
-        clearTimeout(this.#timeout);
-      }
-      this.#timeout = setTimeout(() => {
-        logger.info('ASSET CHANGE, detected change in asset files');
-        this.#listeners.forEach((cb) => cb(eventType, filename));
-      }, this.delay);
-    });
+        if (this.#timeout) {
+          clearTimeout(this.#timeout);
+        }
+        this.#timeout = setTimeout(() => {
+          logger.info('ASSET CHANGE, detected change in asset files');
+          this.#listeners.forEach((cb) => cb(eventType, filename));
+        }, this.delay);
+      });
+    } catch (err) {
+      logger.error(`fs watcher start error: ${err.message}`);
+    }
   }
 
   onChange(cb) {
@@ -48,8 +60,9 @@ class FsWatcher {
   }
 }
 
+const assetSubdir = ASSET_DIR.replace(/^[/\\]+/, '');
 const assetWatcher = new FsWatcher(
-  path.join(__dirname, 'public', ASSET_DIR),
+  path.join(__dirname, 'public', assetSubdir),
   { filetypes: ['js', 'css'] },
 );
 export default assetWatcher;
