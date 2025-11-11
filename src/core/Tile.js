@@ -342,7 +342,7 @@ export async function createZoomTileFromChunk(
 
     try {
       ensureDir(filename);
-      await sharp(tileRGBBuffer, {
+      const encoded = await sharp(tileRGBBuffer, {
         raw: {
           width: TILE_SIZE * TILE_ZOOM_LEVEL,
           height: TILE_SIZE * TILE_ZOOM_LEVEL,
@@ -351,7 +351,8 @@ export async function createZoomTileFromChunk(
       })
         .resize(TILE_SIZE)
         .webp({ quality: 100, smartSubsample: true })
-        .toFile(filename);
+        .toBuffer();
+      fs.writeFileSync(filename, encoded);
     } catch (error) {
       console.error(
         `Tiling: Error on createZoomTileFromChunk: ${error.message}`,
@@ -392,8 +393,12 @@ export async function createZoomedTile(
   const na = [];
 
   const prom = async (dx, dy) => {
-    // eslint-disable-next-line max-len
-    const chunkfile = `${canvasTileFolder}/${z + 1}/${x * TILE_ZOOM_LEVEL + dx}/${y * TILE_ZOOM_LEVEL + dy}.webp`;
+    const chunkfile = path.resolve(
+      canvasTileFolder,
+      String(z + 1),
+      String(x * TILE_ZOOM_LEVEL + dx),
+      `${y * TILE_ZOOM_LEVEL + dy}.webp`,
+    );
     try {
       if (!fs.existsSync(chunkfile)) {
         na.push([dx, dy]);
@@ -436,7 +441,7 @@ export async function createZoomedTile(
 
     try {
       ensureDir(filename);
-      await sharp(tileRGBBuffer, {
+      const encoded = await sharp(tileRGBBuffer, {
         raw: {
           width: TILE_SIZE,
           height: TILE_SIZE,
@@ -444,7 +449,8 @@ export async function createZoomedTile(
         },
       })
         .webp({ quality: 100, smartSubsample: true })
-        .toFile(filename);
+        .toBuffer();
+      fs.writeFileSync(filename, encoded);
     } catch (error) {
       console.error(
         `Tiling: Error on createZoomedTile: ${error.message}`,
@@ -527,7 +533,12 @@ export async function createTexture(
 
   const prom = (targetSize !== canvasSize)
     ? async (dx, dy) => {
-      const chunkfile = `${canvasTileFolder}/${zoom}/${dx}/${dy}.webp`;
+      const chunkfile = path.resolve(
+        canvasTileFolder,
+        String(zoom),
+        String(dx),
+        `${dy}.webp`,
+      );
       try {
         if (!fs.existsSync(chunkfile)) {
           na.push([dx, dy]);
@@ -585,13 +596,15 @@ export async function createTexture(
 
   const filename = path.resolve(canvasTileFolder, 'texture.webp');
   try {
-    await sharp(textureBuffer, {
+    const encoded = await sharp(textureBuffer, {
       raw: {
         width: targetSize,
         height: targetSize,
         channels: 3,
       },
-    }).toFile(filename);
+    }).toBuffer();
+    ensureDir(filename);
+    fs.writeFileSync(filename, encoded);
   } catch (error) {
     console.error(
       `Tiling: Error on createTexture: ${error.message}`,
