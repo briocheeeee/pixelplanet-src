@@ -56,7 +56,7 @@ for (let i = 0; i < process.argv.length; i += 1) {
       development = true;
       break;
     default:
-      // nothing
+    // nothing
   }
 }
 if (!doBuildServer && !doBuildClient) {
@@ -127,7 +127,7 @@ async function filterLackingLocals(langs, percentage) {
     .map((l) => getPoFileStats(
       path.resolve(__dirname, '..', 'i18n', `${l}.po`),
     )));
-  const goodLangs = [ 'en' ];
+  const goodLangs = ['en'];
   const badLangs = [];
   for (let i = 0; i < langs.length; i += 1) {
     const lang = langs[i];
@@ -156,9 +156,11 @@ function validateLangs(langs) {
   for (const lang of langs) {
     const langFiles = [`${lang}.po`, `ssr-${lang}.po`];
     for (const langFile of langFiles) {
-      process.stdout.clearLine(0);
-      process.stdout.cursorTo(0);
-      process.stdout.write(`i18n/${langFile} `);
+      if (process.stdout && process.stdout.isTTY && typeof process.stdout.clearLine === 'function' && typeof process.stdout.cursorTo === 'function') {
+        process.stdout.clearLine(0);
+        process.stdout.cursorTo(0);
+        process.stdout.write(`i18n/${langFile} `);
+      }
       const filePath = path.join(langDir, langFile);
       if (!fs.existsSync(filePath)) {
         continue;
@@ -170,8 +172,10 @@ function validateLangs(langs) {
       }
     }
   }
-  process.stdout.clearLine(0);
-  process.stdout.cursorTo(0);
+  if (process.stdout && process.stdout.isTTY && typeof process.stdout.clearLine === 'function' && typeof process.stdout.cursorTo === 'function') {
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
+  }
   return brokenLangs;
 }
 
@@ -336,7 +340,7 @@ function buildClients(slangs) {
 }
 
 async function buildClientsSync(avlangs) {
-  for(let i = 0; i < avlangs.length; i += 1) {
+  for (let i = 0; i < avlangs.length; i += 1) {
     const lang = avlangs[i];
     console.log(`Build client for locale ${lang}...`);
     await compile(clientConfig({
